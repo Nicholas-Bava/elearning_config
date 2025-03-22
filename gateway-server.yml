@@ -1,0 +1,53 @@
+server:
+  port: 8072
+  
+logstash.host: 3.136.161.26:5000
+  
+ 
+eureka:
+  instance:
+    preferIpAddress: true
+  client:
+    registerWithEureka: true
+    fetchRegistry: true
+    serviceUrl:
+      defaultZone: http://eurekaserver:8070/eureka/
+      
+spring:
+  zipkin:
+    baseUrl: http://zipkin:9411
+  sleuth:
+    sampler:
+      percentage: 1
+  cloud:
+    loadbalancer.ribbon.enabled: false
+    gateway:
+        routes:
+        - id: user-service
+          uri: lb://user-service
+          predicates:
+          - Path=/user/**
+          filters:
+          - RewritePath=/user/(?<path>.*), /$\{path}
+          - RemoveRequestHeader= Cookie,Set-Cookie
+        - id: course-service
+          uri: lb://course-service
+          predicates:
+          - Path=/course/**
+          filters:
+          - RewritePath=/course/(?<path>.*), /$\{path}
+          - RemoveRequestHeader= Cookie,Set-Cookie
+        - id: enrollment-service
+          uri: lb://enrollment-service
+          predicates:
+          - Path=/enrollment/**
+          filters:
+          - RewritePath=/enrollment/(?<path>.*), /$\{path}
+          - RemoveRequestHeader= Cookie,Set-Cookie
+   
+    
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
