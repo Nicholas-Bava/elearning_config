@@ -2,6 +2,10 @@ server:
   port: 8072
   
 logstash.host: 3.136.161.26:5000
+
+logging:
+  level:
+    io.micrometer.observation.contextpropagation.ObservationThreadLocalAccessor: ERROR
   
 eureka:
   instance:
